@@ -14,15 +14,14 @@ def send_welcome(message):
 	markup.add(button1)
 	bot.send_message(message.chat.id, """Вас приветствует служба поддержки пользователей.
 	Пожалуйста авторизируйтесь.""".format(message.from_user), reply_markup=markup)
-	bot.send_message(message.chat.id, message.from_user.id)
 
 
 @bot.message_handler(commands=['authorization'])
 def auth(message):
 	global flag_user
-	with open("data_users.json", "r") as write_file:
+	with open("data_users.json", "r") as f:
 		check = str(message.from_user.id)
-		for line in write_file:
+		for line in f:
 			if check == line:
 				flag_user = True
 				bot.send_message(message.chat.id, """Добрый день, {0.first_name}! Вас приветствует служба поддержки пользователей.
