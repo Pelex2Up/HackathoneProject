@@ -1,8 +1,8 @@
 import telebot
-import json
 from telebot import types
-from json_data import *
 
+
+user_id = None
 flag_user = False
 bot = telebot.TeleBot("5621023291:AAHMLhmpOOEpA1XRtRWebijBmsYms4neYSA")
 
@@ -33,23 +33,21 @@ def auth(message):
 
 @bot.message_handler(content_types='text')
 def user_request(message):
-	global flag_user
+	global flag_user, user_id
 	if flag_user == True:
 		bot.reply_to(message, 'Ваш запрос принят. Ожидайте ответ от службы поддержки!')
 		admin = -1001671702709
 		sent = bot.send_message(admin, f'Новый запрос от пользователя @{message.from_user.username}: {message.text}')
+		user_id = message.from_user.id
 		bot.register_next_step_handler(sent, admin_answer)
-		markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-		but1 = types.KeyboardButton("Завершить запрос.")
-		markup.add(but1)
 	else:
 		bot.send_message(message.chat.id, 'Вы не прошли авторизацию. Обратитесь к администратору.')
 
 
 @bot.message_handler(content_types='text')
 def admin_answer(message):
-	admin = message.from_user.id
-	bot.send_message(admin, message.text)
+	global user_id
+	bot.send_message(user_id, message.text)
 
 bot.polling(none_stop=True, interval=0)
 
